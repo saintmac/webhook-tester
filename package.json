@@ -1,0 +1,31 @@
+{
+  "name": "webhook-tester",
+  "version": "0.1.0",
+  "description": "Simple express app to use for automated testing of webhooks Edit",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saintmac/webhook-tester.git"
+  },
+  "keywords": [
+    "webhook",
+    "test"
+  ],
+  "author": "saintmac",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/saintmac/webhook-tester/issues"
+  },
+  "homepage": "https://github.com/saintmac/webhook-tester#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.7"
+  }
+}
