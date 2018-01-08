@@ -12,6 +12,23 @@ A test sequence could be
 `npm install webhook-tester`
 
 ## Use
+### Launching webhook-tester
+You can either start webhook-tester on a separate terminal window, or require it in your tests. Don't do both :-)
+
+#### Start in the terminal
+`npm start`
+
+#### Require in your test files
+You only need to start it once but it doesn't matter if you call start multiple times.
+
+```javascript
+const webhookTester = require('webhook-tester');
+webhookTester.port = 4003; // Optional. 4003 is the default
+webhookTester.timeout = 10000; // in ms. Optional. 60000 is the default
+webhookTester.start(); // Required. You can optionnally pass a function to get the register and call urls
+```
+
+
 ### Registering a webhook test
 
 `GET http://localhost:4003/register/:webhook_id`

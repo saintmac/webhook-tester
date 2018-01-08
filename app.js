@@ -1,9 +1,11 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
-const port = 4003
 
-const timeoutDuration = 60000 // in ms
+exports.port = 4003
+exports.timeout = 60000
+var started = false
+
 const whStore = {}
 
 app.use(bodyParser.json())
@@ -16,12 +18,12 @@ app.get('/register/:whid', function (req, res) {
     res.status(400).send({message})
   }
   else {
-    console.log(`Webhook ${whid} registered, waiting to be called on http://localhost:${port}/webhooks/${whid}`)
+    console.log(`Webhook ${whid} registered, waiting to be called on http://localhost:${exports.port}/webhooks/${whid}`)
     const timeoutId = setTimeout(function() {
-      console.log(`Webhook ${whid} timed out after ${timeoutDuration}`)
+      console.log(`Webhook ${whid} timed out after ${exports.timeout}`)
       delete whStore[whid]
       res.sendStatus(503)
-    }, timeoutDuration)
+    }, exports.timeout)
 
     whStore[whid] = {
       res,
@@ -50,6 +52,36 @@ const whHandler = function(req, res) {
 app.get('/webhooks/:whid', whHandler)
 app.post('/webhooks/:whid', whHandler)
 
-app.listen(port, function() {
-  console.log("Webhook tester app listening on port 4003!")
-})
+
+const start = function(done) {
+  const callback = function() {
+    if (done) {
+      const baseUrl = `http://localhost:${exports.port}/`
+      done({
+        webhookBaseUrl: baseUrl + 'webhooks/',
+        registerBaseUrl: baseUrl + 'register/'
+      })
+    }
+  }
+
+  if (started) {
+    console.log(`Webhook tester app was already running on port ${exports.port}!`)
+    callback()
+  }
+  else {
+    app.listen(exports.port, function() {
+      console.log(`Webhook tester app listening on port ${exports.port}!`)
+      started = true
+      callback()
+    })
+  }
+}
+
+if (require.main === module) {
+  console.log('Launching Webhook tester')
+  start((urls) => {
+    console.log(urls)
+  })
+}
+
+exports.start = start
