@@ -24,7 +24,8 @@ You only need to start it once but it doesn't matter if you call start multiple 
 ```javascript
 const webhookTester = require('webhook-tester');
 webhookTester.port = 4003; // Optional. 4003 is the default
-webhookTester.timeout = 10000; // in ms. Optional. 60000 is the default
+webhookTester.timeout = 10000; // in ms. Optional. 10000 is the default
+webhookTester.verbose = false, // Boolean. Optional. Defaults to true. If true logs every register and webhook call
 webhookTester.start(); // Required. You can optionnally pass a function to get the register and call urls
 ```
 

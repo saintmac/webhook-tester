@@ -2,8 +2,11 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 
-exports.port = 4003
-exports.timeout = 60000
+config = {
+  port: 4003,
+  timeout: 10000,
+  verbose: true
+}
 var started = false
 
 const whStore = {}
@@ -14,16 +17,16 @@ app.get('/register/:whid', function (req, res) {
   const whid = req.params.whid
   if(whStore[whid]) {
     const message = `Webhook id ${whid} already used and still pending`
-    console.log(message)
+    if (config.verbose) console.log(message)
     res.status(400).send({message})
   }
   else {
-    console.log(`Webhook ${whid} registered, waiting to be called on http://localhost:${exports.port}/webhooks/${whid}`)
+    console.log(`Webhook ${whid} registered, waiting to be called on http://localhost:${config.port}/webhooks/${whid}`)
     const timeoutId = setTimeout(function() {
-      console.log(`Webhook ${whid} timed out after ${exports.timeout}`)
+      if (config.verbose) console.log(`Webhook ${whid} timed out after ${config.timeout}`)
       delete whStore[whid]
       res.sendStatus(503)
-    }, exports.timeout)
+    }, config.timeout)
 
     whStore[whid] = {
       res,
@@ -39,12 +42,12 @@ const whHandler = function(req, res) {
     delete whStore[whid]
     clearTimeout(wh.timeoutId)
     const payload = req.body || {}
-    console.log(`Webhook ${whid} just go called, sending the payload back`, payload)
+    if (config.verbose) console.log(`Webhook ${whid} just got called, sending the payload back`, payload)
     wh.res.send(payload)
     res.sendStatus(200)
   }
   else {
-    console.log(`Webhook ${whid} just got called but could not be found`)
+    if (config.verbose) console.log(`Webhook ${whid} just got called but could not be found`)
     res.sendStatus(404)
   }
 }
@@ -56,7 +59,7 @@ app.post('/webhooks/:whid', whHandler)
 const start = function(done) {
   const callback = function() {
     if (done) {
-      const baseUrl = `http://localhost:${exports.port}/`
+      const baseUrl = `http://localhost:${config.port}/`
       done({
         webhookBaseUrl: baseUrl + 'webhooks/',
         registerBaseUrl: baseUrl + 'register/'
@@ -65,12 +68,12 @@ const start = function(done) {
   }
 
   if (started) {
-    console.log(`Webhook tester app was already running on port ${exports.port}!`)
+    console.log(`Webhook tester app was already running on port ${config.port}!`)
     callback()
   }
   else {
-    app.listen(exports.port, function() {
-      console.log(`Webhook tester app listening on port ${exports.port}!`)
+    app.listen(config.port, function() {
+      console.log(`Webhook tester app listening on port ${config.port}!`)
       started = true
       callback()
     })
@@ -84,4 +87,5 @@ if (require.main === module) {
   })
 }
 
+module.exports = config
 exports.start = start
