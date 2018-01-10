@@ -88,4 +88,4 @@ if (require.main === module) {
 }
 
 module.exports = config
-exports.start = start
+module.exports.start = start
