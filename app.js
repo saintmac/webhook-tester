@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 
-config = {
+var config = {
   port: 4003,
   timeout: 10000,
   verbose: true
@@ -21,7 +21,7 @@ app.get('/register/:whid', function (req, res) {
     res.status(400).send({message})
   }
   else {
-    console.log(`Webhook ${whid} registered, waiting to be called on http://localhost:${config.port}/webhooks/${whid}`)
+    if (config.verbose) console.log(`Webhook ${whid} registered, waiting to be called on http://localhost:${config.port}/webhooks/${whid}`)
     const timeoutId = setTimeout(function() {
       if (config.verbose) console.log(`Webhook ${whid} timed out after ${config.timeout}`)
       delete whStore[whid]
