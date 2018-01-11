@@ -43,5 +43,5 @@ The Webhook url that needs to be called to get a successful response from the ab
 `http://localhost:4003/webhooks/:webhook_id`
 
 where `:webhook_id` is the same unique id that you have registered above.
-This url will accept `GET` and `POST` rThis url will accept `GET` and `POST` requests.
+This url will accept `GET` and `POST` requests.
 It can only be called one time per webhook test.
