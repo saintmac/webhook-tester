@@ -3,6 +3,7 @@ const app = express()
 const bodyParser = require('body-parser')
 
 var config = {
+  host: 'localhost',
   port: 4003,
   timeout: 10000,
   verbose: true
@@ -21,7 +22,7 @@ app.get('/register/:whid', function (req, res) {
     res.status(400).send({message})
   }
   else {
-    if (config.verbose) console.log(`Webhook ${whid} registered, waiting to be called on http://localhost:${config.port}/webhooks/${whid}`)
+    if (config.verbose) console.log(`Webhook ${whid} registered, waiting to be called on http://${config.host}:${config.port}/webhooks/${whid}`)
     const timeoutId = setTimeout(function() {
       if (config.verbose) console.log(`Webhook ${whid} timed out after ${config.timeout}`)
       delete whStore[whid]
@@ -59,7 +60,7 @@ app.post('/webhooks/:whid', whHandler)
 const start = function(done) {
   const callback = function() {
     if (done) {
-      const baseUrl = `http://localhost:${config.port}/`
+      const baseUrl = `http://${config.host}:${config.port}/`
       done({
         webhookBaseUrl: baseUrl + 'webhooks/',
         registerBaseUrl: baseUrl + 'register/'
