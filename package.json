@@ -1,6 +1,6 @@
 {
   "name": "webhook-tester",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Simple express app to use for automated testing of webhooks Edit",
   "main": "app.js",
   "scripts": {

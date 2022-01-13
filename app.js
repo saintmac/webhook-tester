@@ -14,7 +14,8 @@ const whStore = {}
 
 app.use(bodyParser.json())
 
-app.get('/register/:whid', function (req, res) {
+
+const whRegisterHandler = function (req, res) {
   const whid = req.params.whid
   if(whStore[whid]) {
     const message = `Webhook id ${whid} already used and still pending`
@@ -29,12 +30,19 @@ app.get('/register/:whid', function (req, res) {
       res.sendStatus(503)
     }, config.timeout)
 
-    whStore[whid] = {
+    const wh = {
       res,
       timeoutId
     }
+    if (req.body !== undefined && req.body.headers !== undefined && Array.isArray(req.body.headers)) {
+      wh.headers = headers
+    }
+    whStore[whid] = wh
   }
-})
+}
+
+app.get('/register/:whid', whRegisterHandler)
+app.post('/register/:whid', whRegisterHandler) //useful to accept an Array of header names in the body of the request
 
 const whHandler = function(req, res) {
   const whid = req.params.whid
@@ -42,7 +50,16 @@ const whHandler = function(req, res) {
   if (wh) {
     delete whStore[whid]
     clearTimeout(wh.timeoutId)
-    const payload = req.body || {}
+    const payload = {
+      body: req.body || {}
+    }
+    if (wh.headers) {
+      const headers = {}
+      for (const headerName in wh.headers) {
+        headers[headerName] = req.get(headerName) 
+      }
+      payload.headers = headers
+    }
     if (config.verbose) console.log(`Webhook ${whid} just got called, sending the payload back`, payload)
     wh.res.send(payload)
     res.sendStatus(200)
