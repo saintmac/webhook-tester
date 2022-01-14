@@ -56,7 +56,8 @@ const whHandler = function(req, res) {
     }
     if (wh.headers) {
       const headers = {}
-      for (const headerName in wh.headers) {
+      for (let i = 0; i < wh.headers.length; i++) {
+        const headerName = wh.headers[i]
         headers[headerName] = req.get(headerName) 
       }
       payload.headers = headers
