@@ -35,7 +35,8 @@ const whRegisterHandler = function (req, res) {
       timeoutId
     }
     if (req.body !== undefined && req.body.headers !== undefined && Array.isArray(req.body.headers)) {
-      wh.headers = headers
+      wh.headers = req.body.headers
+      if (config.verbose) console.log(`Webhook ${whid} was registered with headers`, wh.headers)
     }
     whStore[whid] = wh
   }
